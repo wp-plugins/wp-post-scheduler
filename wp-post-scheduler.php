@@ -3,7 +3,7 @@
 Plugin Name: WP Post Scheduler
 Plugin URI: http://www.wamtengineers.com
 Description: This plugin is being used as a bridge between WP Post Scheduler and Wordpress.
-Version: 1.0
+Version: 1.0.1
 Author: wamtengineers
 Author URI: http://www.wamtengineers.com
 */
@@ -114,7 +114,7 @@ class wp_post_scheduler {
 							foreach($images as $image){
 								$post_content=$this->put_random_images($post_content, wp_get_attachment_image($image->ID, 'large', 0, array('class'=>'alignleft')));
 							}
-							$post_content=$post_content;
+							$post_content=$post_content."<br style='clear:both' />";
 						}
 					}
 					$post=array(
@@ -159,7 +159,13 @@ class wp_post_scheduler {
 		$paragraphs=explode("\n", $content);
 		$paragraph=rand(1, count($paragraphs));
 		$paragraph=$paragraphs[$paragraph-1];
-		return preg_replace("/".$paragraph."/", $paragraph.$image_url, $content, 1);
+		if(($start=strpos($content, $paragraph))!==false){
+			$start+=strlen($paragraph);
+			$part1=substr($content, 0, $start);
+			$part2=substr($content, $start);
+			$content=$part1.$image_url.$part2;
+		}
+		return $content;
 	}
 }
 $wp_post_scheduler=new wp_post_scheduler();
